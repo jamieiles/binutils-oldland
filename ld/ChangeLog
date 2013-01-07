@@ -1,4 +1,9 @@
-2013-03-05  Alan Modra  <amodra@gmail.com>
+2013-01-07  Patrice Dumas  <pertusus@free.fr>
+
+	* ld.texinfo: Replace @ with @@ when it is part of the text.
+	Correct ordering of M68HC11 entry.
+
+2013-01-04  Juergen Urban <JuergenUrban@gmx.de>
 
 	PR ld/15222
 	* ldlang.c (lang_size_sections_1): When given an lma_region align
