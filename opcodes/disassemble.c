@@ -67,6 +67,7 @@
 #define ARCH_mt
 #define ARCH_msp430
 #define ARCH_ns32k
+#define ARCH_oldland
 #define ARCH_openrisc
 #define ARCH_or32
 #define ARCH_pdp11
@@ -500,6 +501,11 @@ disassembler (abfd)
 #ifdef ARCH_m32c
     case bfd_arch_m32c:
       disassemble = print_insn_m32c;
+      break;
+#endif
+#ifdef ARCH_oldland
+    case bfd_arch_oldland:
+      disassemble = print_insn_oldland;
       break;
 #endif
 #ifdef ARCH_tilegx

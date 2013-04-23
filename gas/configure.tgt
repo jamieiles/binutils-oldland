@@ -334,6 +334,8 @@ case ${generic_target} in
   ns32k-pc532-lites*)			fmt=aout em=nbsd532 ;;
   ns32k-*-*n*bsd*)			fmt=aout em=nbsd532 ;;
 
+  oldland-*-*)				fmt=elf ;;
+
   openrisc-*-*)				fmt=elf ;;
 
   or32-*-rtems*)			fmt=elf ;;

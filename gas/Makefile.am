@@ -147,6 +147,7 @@ TARGET_CPU_CFILES = \
 	config/tc-msp430.c \
 	config/tc-mt.c \
 	config/tc-ns32k.c \
+	config/tc-oldland.c \
 	config/tc-openrisc.c \
 	config/tc-or32.c \
 	config/tc-pdp11.c \

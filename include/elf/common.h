@@ -405,6 +405,8 @@
 
 #define EM_ADAPTEVA_EPIPHANY   0x1223  /* Adapteva's Epiphany architecture.  */
 
+#define EM_OLDLAND		0xcafe
+
 /* See the above comment before you add a new EM_* value here.  */
 
 /* Values for e_version.  */

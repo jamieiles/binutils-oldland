@@ -1102,6 +1102,10 @@ case "${targ}" in
     targ_underscore=yes
     ;;
 
+  oldland-*-elf)
+    targ_defvec=bfd_elf32_oldland_vec
+    ;;
+
   openrisc-*-elf)
     targ_defvec=bfd_elf32_openrisc_vec
     ;;

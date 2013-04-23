@@ -188,6 +188,8 @@ TARGET_LIBOPCODES_CFILES = \
 	mt-ibld.c \
 	mt-opc.c \
 	ns32k-dis.c \
+	oldland-dis.c \
+	oldland-opc.c \
 	openrisc-asm.c \
 	openrisc-desc.c \
 	openrisc-dis.c \

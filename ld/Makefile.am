@@ -241,6 +241,7 @@ ALL_EMULATION_SOURCES = \
 	eelf32mipswindiss.c \
 	eelf32moxie.c \
 	eelf32mt.c \
+	eelf32oldland.c \
 	eelf32openrisc.c \
 	eelf32ppc.c \
 	eelf32ppc_fbsd.c \
@@ -1130,6 +1131,9 @@ eelf32moxie.c: $(srcdir)/emulparams/elf32moxie.sh \
 eelf32mt.c: $(srcdir)/emulparams/elf32mt.sh \
   $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 	${GENSCRIPTS} elf32mt "$(tdir_mt)"
+eelf32oldland.c: $(srcdir)/emulparams/elf32oldland.sh \
+  $(ELF_GEN_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} elf32oldland "$(tdir_oldland)"
 eelf32openrisc.c: $(srcdir)/emulparams/elf32openrisc.sh \
   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 	${GENSCRIPTS} elf32openrisc "$(tdir_openrisc)"

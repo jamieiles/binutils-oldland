@@ -3149,6 +3149,8 @@ case "${target}" in
     ;;
   mips*-*-linux*)
     ;;
+  oldland*-*-*)
+    ;;
   powerpc*-*-linux*)
     ;;
   powerpc-*-darwin*)
@@ -3253,6 +3255,9 @@ case "${target}" in
     ;;
   mmix-*-*)
     noconfigdirs="$noconfigdirs target-libffi target-boehm-gc"
+    ;;
+  oldland-*-*)
+    noconfigdirs="$noconfigdirs ${libgcj}"
     ;;
   powerpc-*-aix*)
     # copied from rs6000-*-* entry
@@ -3543,6 +3548,9 @@ case "${target}" in
     ;;
   mt-*-*)
     noconfigdirs="$noconfigdirs sim"
+    ;;
+  oldland-*-*)
+    noconfigdirs="$noconfigdirs gdb sim target-libgloss gprof libgui itcl"
     ;;
   powerpc-*-aix*)
     # copied from rs6000-*-* entry

@@ -2192,6 +2192,8 @@ enum bfd_architecture
 #define bfd_mach_tilegx32  2
   bfd_arch_aarch64,   /* AArch64  */
 #define bfd_mach_aarch64 0
+  bfd_arch_oldland, /* Oldland */
+#define bfd_mach_oldland 0
   bfd_arch_last
   };
 

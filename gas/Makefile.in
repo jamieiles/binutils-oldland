@@ -415,6 +415,7 @@ TARGET_CPU_CFILES = \
 	config/tc-msp430.c \
 	config/tc-mt.c \
 	config/tc-ns32k.c \
+	config/tc-oldland.c \
 	config/tc-openrisc.c \
 	config/tc-or32.c \
 	config/tc-pdp11.c \
@@ -835,6 +836,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-msp430.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-mt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-ns32k.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-oldland.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-openrisc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-or32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-pdp11.Po@am__quote@
@@ -1446,6 +1448,20 @@ tc-ns32k.obj: config/tc-ns32k.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-ns32k.c' object='tc-ns32k.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-ns32k.obj `if test -f 'config/tc-ns32k.c'; then $(CYGPATH_W) 'config/tc-ns32k.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-ns32k.c'; fi`
+
+tc-oldland.o: config/tc-oldland.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-oldland.o -MD -MP -MF $(DEPDIR)/tc-oldland.Tpo -c -o tc-oldland.o `test -f 'config/tc-oldland.c' || echo '$(srcdir)/'`config/tc-oldland.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-oldland.Tpo $(DEPDIR)/tc-oldland.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-oldland.c' object='tc-oldland.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-oldland.o `test -f 'config/tc-oldland.c' || echo '$(srcdir)/'`config/tc-oldland.c
+
+tc-oldland.obj: config/tc-oldland.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-oldland.obj -MD -MP -MF $(DEPDIR)/tc-oldland.Tpo -c -o tc-oldland.obj `if test -f 'config/tc-oldland.c'; then $(CYGPATH_W) 'config/tc-oldland.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-oldland.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-oldland.Tpo $(DEPDIR)/tc-oldland.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-oldland.c' object='tc-oldland.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-oldland.obj `if test -f 'config/tc-oldland.c'; then $(CYGPATH_W) 'config/tc-oldland.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-oldland.c'; fi`
 
 tc-openrisc.o: config/tc-openrisc.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-openrisc.o -MD -MP -MF $(DEPDIR)/tc-openrisc.Tpo -c -o tc-openrisc.o `test -f 'config/tc-openrisc.c' || echo '$(srcdir)/'`config/tc-openrisc.c
