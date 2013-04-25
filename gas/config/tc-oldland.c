@@ -387,10 +387,8 @@ void md_apply_fix(fixS *fixP ATTRIBUTE_UNUSED, valueT * valP ATTRIBUTE_UNUSED,
 		val >>= 16;
 		/* Intentional fallthrough. */
 	case BFD_RELOC_16:
-		if ((unsigned)val > 0xffff) {
-			printf("%08lx\n", val);
+		if ((unsigned)val > 0xffff)
 			as_bad(_("relocation out of range for 16 bits"));
-		}
 		/* Intentional fallthrough. */
 	case BFD_RELOC_LO16:
 		instr = read_instruction(buf);
@@ -402,7 +400,7 @@ void md_apply_fix(fixS *fixP ATTRIBUTE_UNUSED, valueT * valP ATTRIBUTE_UNUSED,
 		break;
 	case BFD_RELOC_24_PCREL:
 		instr = read_instruction(buf);
-		instr |= (val >> 2);
+		instr |= (val >> 2) & 0x00ffffff;
 		md_number_to_chars(buf, instr, 4);
 		break;
 	case BFD_RELOC_16_PCREL:
