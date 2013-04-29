@@ -387,8 +387,6 @@ void md_apply_fix(fixS *fixP ATTRIBUTE_UNUSED, valueT * valP ATTRIBUTE_UNUSED,
 		val >>= 16;
 		/* Intentional fallthrough. */
 	case BFD_RELOC_16:
-		if ((unsigned)val > 0xffff)
-			as_bad(_("relocation out of range for 16 bits"));
 		/* Intentional fallthrough. */
 	case BFD_RELOC_LO16:
 		instr = read_instruction(buf);

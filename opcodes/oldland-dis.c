@@ -73,9 +73,11 @@ int print_insn_oldland(bfd_vma addr, struct disassemble_info *info)
 			    reg_names[ra], reg_names[rb]);
 		} else {
 			imm = instr_imm16(instr);
+			/* Sign extend to 32 bits. */
+			imm = (unsigned int)(((int)(imm << 16)) >> 16);
 			if (op_num == 0xa) {
 				fpr(stream, "%s, ", reg_names[rd]);
-				info->print_address_func((bfd_vma)imm, info);
+				info->print_address_func((bfd_vma)(imm & 0xffff), info);
 			} else {
 				fpr(stream, "%s, %s, ", reg_names[rd],
 				    reg_names[ra]);
@@ -119,12 +121,9 @@ int print_insn_oldland(bfd_vma addr, struct disassemble_info *info)
 		}
 
 		imm = instr_imm16(instr);
+		/* Sign extend to 32 bits. */
+		imm = (unsigned int)(((int)(imm << 16)) >> 16);
 		if (instr & (1 << 9)) {
-			/*
-			 * Sign extend the immediate and make it
-			 * relative to the PC.
-			 */
-			imm = (unsigned int)(((int)(imm << 16)) >> 16);
 			imm += addr;
 
 			fpr(stream, "%s\t%s, ", opcode->name,
