@@ -24,19 +24,23 @@ static struct hash_control *opcode_hash_control;
 void md_begin(void)
 {
 	unsigned m;
-	const struct oldland_opc *opc;
+	const struct oldland_instruction *opc;
 	opcode_hash_control = hash_new();
 
-	for (m = 0, opc = oldland_arith_opc;
-	     m < ARRAY_SIZE(oldland_arith_opc); ++m, ++opc)
+	for (m = 0, opc = oldland_instructions_0;
+	     m < ARRAY_SIZE(oldland_instructions_0); ++m, ++opc)
 		if (opc->name)
 			hash_insert(opcode_hash_control, opc->name, (char *)opc);
-	for (m = 0, opc = oldland_branch_opc;
-	     m < ARRAY_SIZE(oldland_branch_opc); ++m, ++opc)
+	for (m = 0, opc = oldland_instructions_1;
+	     m < ARRAY_SIZE(oldland_instructions_1); ++m, ++opc)
 		if (opc->name)
 			hash_insert(opcode_hash_control, opc->name, (char *)opc);
-	for (m = 0, opc = oldland_ldr_str_opc;
-	     m < ARRAY_SIZE(oldland_ldr_str_opc); ++m, ++opc)
+	for (m = 0, opc = oldland_instructions_2;
+	     m < ARRAY_SIZE(oldland_instructions_2); ++m, ++opc)
+		if (opc->name)
+			hash_insert(opcode_hash_control, opc->name, (char *)opc);
+	for (m = 0, opc = oldland_instructions_3;
+	     m < ARRAY_SIZE(oldland_instructions_3); ++m, ++opc)
 		if (opc->name)
 			hash_insert(opcode_hash_control, opc->name, (char *)opc);
 
@@ -70,6 +74,11 @@ static int is_register_operand(char *ptr)
 	return FALSE;
 }
 
+static int is_index_operand(char *ptr)
+{
+	return *ptr == '[';
+}
+
 static int parse_register_operand(char **ptr)
 {
 	char *s = *ptr;
@@ -87,13 +96,125 @@ static int parse_register_operand(char **ptr)
 	return -1;
 }
 
+enum operand_class {
+	OP_CLASS_REGISTER,
+	OP_CLASS_INDEX,
+	OP_CLASS_IMMEDIATE,
+};
+
+static int parse_operand(const struct oldland_operand * const op[MAX_OP_TYPES],
+			 char *p, char **op_end, unsigned int *instr,
+			 struct oldland_instruction *opcode)
+{
+	enum operand_class op_class;
+	int i;
+	expressionS arg;
+
+	while (ISSPACE(**op_end))
+		++(*op_end);
+	if (is_register_operand(*op_end))
+		op_class = OP_CLASS_REGISTER;
+	else if (is_index_operand(*op_end))
+		op_class = OP_CLASS_INDEX;
+	else
+		op_class = OP_CLASS_IMMEDIATE;
+
+	for (i = 0; i < 2 && op[i]; ++i) {
+		const struct oldland_operand *opdef = op[i];
+		unsigned int reloc_type;
+		int pcrel, reg;
+
+		switch (opdef->type) {
+		case OPERAND_INDEX:
+			if (op_class == OP_CLASS_INDEX) {
+				unsigned int m;
+
+				++(*op_end);
+				for (m = 0; m < opdef->meta.nr_ops; ++m) {
+					if (parse_operand(opdef->meta.ops, p,
+							  op_end, instr, opcode))
+						return -1;
+					if (m != opdef->meta.nr_ops - 1) {
+						if (**op_end != ',') {
+							as_bad(_("expecting comma delimited operands\n"));
+							return -1;
+						}
+						++(*op_end);
+					}
+				}
+				if (**op_end != ']') {
+					as_bad(_("expected terminating ]"));
+					return -1;
+				}
+				goto out;
+			}
+			break;
+		case OPERAND_IMM16PC:
+		case OPERAND_IMM16:
+		case OPERAND_IMM24:
+			if (op_class == OP_CLASS_IMMEDIATE) {
+				if (!strncmp(*op_end, "%hi(", 4)) {
+					*op_end += 4;
+					reloc_type = BFD_RELOC_HI16;
+					pcrel = 0;
+				} else if (!strncmp(*op_end, "%lo(", 4)) {
+					*op_end += 4;
+					reloc_type = BFD_RELOC_LO16;
+					pcrel = 0;
+				} else if (opdef->type == OPERAND_IMM24) {
+					reloc_type = BFD_RELOC_24_PCREL;
+					pcrel = 1;
+				} else {
+					reloc_type = BFD_RELOC_16;
+					pcrel = opdef->type == OPERAND_IMM16PC;
+				}
+				*op_end = parse_exp_save_ilp(*op_end, &arg);
+				fix_new_exp(frag_now,
+					    (p - frag_now->fr_literal),
+					    2, &arg, pcrel, reloc_type);
+
+				if ((reloc_type == BFD_RELOC_LO16 ||
+				     reloc_type == BFD_RELOC_HI16) &&
+				    **op_end != ')') {
+					as_bad(_("expected terminating )"));
+					return -1;
+				}
+
+				goto out;
+			}
+			break;
+		case OPERAND_RD:
+		case OPERAND_RA:
+		case OPERAND_RB:
+			if (op_class == OP_CLASS_REGISTER) {
+				reg = parse_register_operand(op_end);
+				*instr |= reg << opdef->def.bitpos;
+				goto out;
+			}
+			break;
+		default:
+			as_bad(_("bad operand class\n"));
+			return -1;
+		}
+	}
+
+	as_bad(_("failed to parse operand %s\n"), *op_end);
+	return -1;
+
+out:
+	if (opcode->formatsel >= 0)
+		*instr |= (i << opcode->formatsel);
+
+	return 0;
+}
+
 void md_assemble(char *str)
 {
 	char *op_start, *op_end, *p;
 	int nlen = 0;
 	char pend;
 	unsigned int instr;
-	struct oldland_opc *opcode;
+	struct oldland_instruction *opcode;
 
 	while (ISSPACE(*str))
 		++str;
@@ -109,146 +230,38 @@ void md_assemble(char *str)
 
 	if (nlen == 0)
 		as_bad(_("can't find opcode"));
-	opcode = (struct oldland_opc *)hash_find(opcode_hash_control, op_start);
-	*op_end = pend;
+	opcode = (struct oldland_instruction *)hash_find(opcode_hash_control, op_start);
 
 	if (!opcode) {
 		as_bad(_("unknown opcode %s"), op_start);
 		return;
 	}
+	*op_end = pend;
 
 	p = frag_more(4);
 
 	instr = (opcode->class << 30) | (opcode->opcode << 26);
-	switch (opcode->class) {
-	case OLDLAND_ARITHMETIC: {
-		int rd, ra, rb;
-
+	if (opcode->nr_operands >= 1) {
+		if (parse_operand(opcode->op1, p, &op_end, &instr, opcode))
+			return;
+	}
+	if (opcode->nr_operands >= 2) {
 		while (ISSPACE(*op_end))
 			++op_end;
-
-		rd = parse_register_operand(&op_end);
-		instr |= rd << 6;
 		if (*op_end != ',')
 			as_warn(_("expecting comma delimited operands"));
 		++op_end;
-
-		if (opcode->opcode == 0xa) {
-			unsigned int reloc_type = BFD_RELOC_16;
-			if (!strncmp(op_end, "%hi(", 4)) {
-				op_end += 4;
-				reloc_type = BFD_RELOC_HI16;
-			}
-			expressionS arg;
-			op_end = parse_exp_save_ilp(op_end, &arg);
-			fix_new_exp(frag_now,
-				    (p - frag_now->fr_literal),
-				    2, &arg, FALSE, reloc_type);
-			if (reloc_type == BFD_RELOC_HI16 &&
-			    *op_end != ')') {
-				as_bad(_("expected terminating )"));
-				return;
-			}
-			op_end++;
-		} else {
-			ra = parse_register_operand(&op_end);
-			instr |= ra << 3;
-			if (strcmp(opcode->name, "mov")) {
-				if (*op_end != ',')
-					as_warn(_("expecting comma delimited operands"));
-				++op_end;
-			}
-
-			if (is_register_operand(op_end)) {
-				rb = parse_register_operand(&op_end);
-				instr |= rb | (1 << 9);
-			} else if (strcmp(opcode->name, "mov")) {
-				unsigned int reloc_type = BFD_RELOC_16;
-				if (!strncmp(op_end, "%lo(", 4)) {
-					op_end += 4;
-					reloc_type = BFD_RELOC_LO16;
-				}
-				expressionS arg;
-				op_end = parse_exp_save_ilp(op_end, &arg);
-				fix_new_exp(frag_now,
-					    (p - frag_now->fr_literal),
-					    2, &arg, FALSE, reloc_type);
-				if (reloc_type == BFD_RELOC_LO16 &&
-				    *op_end != ')') {
-					as_bad(_("expected terminating )"));
-					return;
-				}
-				op_end++;
-			}
-		}
-		break;
+		if (parse_operand(opcode->op2, p, &op_end, &instr, opcode))
+			return;
 	}
-	case OLDLAND_BRANCH: {
+	if (opcode->nr_operands == 3) {
 		while (ISSPACE(*op_end))
 			++op_end;
-
-		/* ret takes no parameters. */
-		if (opcode->opcode == 0x1)
-			break;
-
-		if (is_register_operand(op_end)) {
-			int ra = parse_register_operand(&op_end);
-			instr |= ra | (1 << 25);
-		} else {
-			expressionS arg;
-			op_end = parse_exp_save_ilp(op_end, &arg);
-			fix_new_exp(frag_now,
-				    (p - frag_now->fr_literal),
-				    2, &arg, TRUE, BFD_RELOC_24_PCREL);
-		}
-		break;
-	}
-	case OLDLAND_LDR_STR: {
-		int is_load = opcode->opcode <= 0x2;
-		int rd = 0, ra = 0, rb = 0;
-		unsigned int reloc_type;
-		int pcrel = 0;
-		expressionS arg;
-
-		while (ISSPACE(*op_end))
-		       ++op_end;
-
-		if (is_load)
-			rd = parse_register_operand(&op_end);
-		else
-			rb = parse_register_operand(&op_end);
 		if (*op_end != ',')
 			as_warn(_("expecting comma delimited operands"));
 		++op_end;
-
-		if (*op_end == '[') {
-			++op_end;
-			ra = parse_register_operand(&op_end);
-			while (ISSPACE(*op_end))
-				++op_end;
-			if (*op_end != ',')
-				as_warn(_("expecting comma delimited operands"));
-			++op_end;
-			reloc_type = BFD_RELOC_16;
-			op_end = parse_exp_save_ilp(op_end, &arg);
-			if (*op_end != ']')
-				as_bad(_("expected terminating ]"));
-		} else {
-			op_end = parse_exp_save_ilp(op_end, &arg);
-			reloc_type = BFD_RELOC_16_PCREL;
-			pcrel = 1;
-			instr |= (1 << 9);
-		}
-		fix_new_exp(frag_now,
-			    (p - frag_now->fr_literal),
-			    2, &arg, pcrel, reloc_type);
-		instr |= (rd << 6) | (ra << 3) | rb;
-		break;
-	}
-	default:
-		as_bad(_("Unexpected instruction class"));
-		ignore_rest_of_line();
-		return;
+		if (parse_operand(opcode->op3, p, &op_end, &instr, opcode))
+			return;
 	}
 
 	number_to_chars_littleendian(p, instr, 4);

@@ -11,42 +11,64 @@ static const char *reg_names[8] = {
 	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$fp", "$sp"
 };
 
-static inline unsigned int instr_ra(unsigned int instr)
+static inline unsigned int extract_field(unsigned int instr, unsigned int bitpos,
+					 unsigned int length)
 {
-	return (instr >> 3) & 0x7;
+	return (instr >> bitpos) & ((1 << length) - 1);
 }
 
-static inline unsigned int instr_rb(unsigned int instr)
+static void print_operand(const struct oldland_operand *op, bfd_vma addr,
+			  unsigned int instr, struct disassemble_info *info)
 {
-	return instr & 0x7;
-}
+	int imm;
+	fprintf_ftype fpr;
+	void *stream;
+	unsigned int m;
 
-static inline unsigned int instr_rd(unsigned int instr)
-{
-	return (instr >> 6) & 0x7;
-}
+	imm = extract_field(instr, op->def.bitpos, op->def.length);
+	stream = info->stream;
+	fpr = info->fprintf_func;
 
-static inline unsigned int instr_imm16(unsigned int instr)
-{
-	return (instr >> 10) & 0xffff;
-}
-
-static inline unsigned int instr_imm24(unsigned int instr)
-{
-	return instr & 0xffffff;
+	/* Sign extend. */
+	if (op->pcrel)
+		imm = (imm << (32 - op->def.length)) >> (32 - op->def.length);
+	switch (op->type) {
+	case OPERAND_IMM24:
+		imm <<= 2;
+	case OPERAND_IMM16PC:
+		imm += addr;
+		info->print_address_func((bfd_vma)imm, info);
+		break;
+	case OPERAND_IMM16:
+		fpr(stream, "0x%x", imm);
+		break;
+	case OPERAND_RA:
+	case OPERAND_RB:
+	case OPERAND_RD:
+		fpr(stream, "%s", reg_names[imm]);
+		break;
+	case OPERAND_INDEX:
+		fpr(stream, "[");
+		for (m = 0; m < op->meta.nr_ops; ++m) {
+			print_operand(op->meta.ops[m], addr, instr, info);
+			if (m != op->meta.nr_ops - 1)
+				fpr(stream, ", ");
+		}
+		fpr(stream, "]");
+		break;
+	}
 }
 
 int print_insn_oldland(bfd_vma addr, struct disassemble_info *info)
 {
+	const struct oldland_instruction *opcode;
 	int status;
-	const struct oldland_opc *opcode;
 	bfd_byte buffer[4];
 	fprintf_ftype fpr;
 	void *stream;
 	unsigned int instr;
 	unsigned int op_num;
-	unsigned int ra, rb, rd;
-	unsigned int imm;
+	int use_second_op;
 
 	stream = info->stream;
 	fpr = info->fprintf_func;
@@ -55,90 +77,50 @@ int print_insn_oldland(bfd_vma addr, struct disassemble_info *info)
 		goto err;
 	instr = bfd_getl32(buffer);
 	op_num = (instr >> 26) & 0xf;
-	ra = instr_ra(instr);
-	rb = instr_rb(instr);
-	rd = instr_rd(instr);
 
 	switch ((instr >> 30) & 0x3) {
-	case OLDLAND_ARITHMETIC:
-		opcode = &oldland_arith_opc[op_num];
-		if (!opcode) {
-			fpr(stream, "undef");
-			break;
-		}
-
-		fpr(stream, "%s\t", opcode->name);
-		if (instr & (1 << 9)) {
-			fpr(stream, "%s, %s, %s", reg_names[rd],
-			    reg_names[ra], reg_names[rb]);
-		} else {
-			imm = instr_imm16(instr);
-			/* Sign extend to 32 bits. */
-			imm = (unsigned int)(((int)(imm << 16)) >> 16);
-			if (op_num == 0xa) {
-				fpr(stream, "%s, ", reg_names[rd]);
-				info->print_address_func((bfd_vma)(imm & 0xffff), info);
-			} else {
-				fpr(stream, "%s, %s, ", reg_names[rd],
-				    reg_names[ra]);
-				info->print_address_func((bfd_vma)imm, info);
-			}
-		}
-
+	case 0x0:
+		opcode = &oldland_instructions_0[op_num];
 		break;
-	case OLDLAND_BRANCH:
-		opcode = &oldland_branch_opc[op_num];
-		if (!opcode) {
-			fpr(stream, "undef");
-			break;
-		}
-
-		if (op_num == 0x1) {
-			fpr(stream, "ret");
-			break;
-		}
-
-		if (instr & (1 << 25)) {
-			fpr(stream, "%s\t%s", opcode->name, reg_names[rb]);
-		} else {
-			imm = instr_imm24(instr);
-			/*
-			 * Sign extend the immediate and make it
-			 * relative to the PC.
-			 */
-			imm = ((unsigned int)(((int)(imm << 8)) >> 8) << 2) +
-				addr;
-			fpr(stream, "%s\t", opcode->name);
-			info->print_address_func((bfd_vma)imm, info);
-		}
-
+	case 0x1:
+		opcode = &oldland_instructions_1[op_num];
 		break;
-	case OLDLAND_LDR_STR:
-		opcode = &oldland_ldr_str_opc[op_num];
-		if (!opcode) {
-			fpr(stream, "undef");
-			break;
-		}
-
-		imm = instr_imm16(instr);
-		/* Sign extend to 32 bits. */
-		imm = (unsigned int)(((int)(imm << 16)) >> 16);
-		if (instr & (1 << 9)) {
-			imm += addr;
-
-			fpr(stream, "%s\t%s, ", opcode->name,
-			    (instr & (1 << 28)) ? reg_names[rb] : reg_names[rd]);
-			info->print_address_func((bfd_vma)imm, info);
-		} else {
-			fpr(stream, "%s\t%s, [%s, 0x%x]", opcode->name,
-			    (instr & (1 << 28)) ? reg_names[rb] : reg_names[rd],
-			    reg_names[ra], imm);
-		}
-
+	case 0x2:
+		opcode = &oldland_instructions_2[op_num];
 		break;
-	default:
+	case 0x3:
+		opcode = &oldland_instructions_3[op_num];
+		break;
+	}
+
+	if (!opcode->name) {
 		fpr(stream, "undef");
-		break;
+		return 4;
+	}
+
+	fpr(stream, "%s\t", opcode->name);
+	use_second_op = (opcode->formatsel >= 0) &&
+		(instr & (1 << opcode->formatsel));
+
+	if (opcode->nr_operands >= 1) {
+		if (opcode->op1[1] && use_second_op)
+			print_operand(opcode->op1[1], addr, instr, info);
+		else
+			print_operand(opcode->op1[0], addr, instr, info);
+	}
+	if (opcode->nr_operands >= 2) {
+		fpr(stream, ", ");
+		if (opcode->op2[1] && use_second_op)
+			print_operand(opcode->op2[1], addr, instr, info);
+		else
+			print_operand(opcode->op2[0], addr, instr, info);
+	}
+	if (opcode->nr_operands == 3) {
+		fpr(stream, ", ");
+		if (opcode->op3[1] && use_second_op)
+			print_operand(opcode->op3[1], addr, instr, info);
+		else
+			print_operand(opcode->op3[0], addr, instr, info);
 	}
 
 	return 4;
