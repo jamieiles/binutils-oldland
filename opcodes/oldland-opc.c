@@ -313,6 +313,16 @@ const struct oldland_instruction oldland_instructions_2[16] = {
                 .op3 = {},
                 .formatsel = 9,
         }, 
+        [OPCODE_STR16] = {
+                .name = "str16",
+                .class = 2,
+                .opcode = OPCODE_STR16,
+                .nr_operands = 2,
+                .op1 = {&operands[OPERAND_RB]},
+                .op2 = {&operands[OPERAND_IMM16], &operands[OPERAND_INDEX]},
+                .op3 = {},
+                .formatsel = 9,
+        }, 
         [OPCODE_LDR16] = {
                 .name = "ldr16",
                 .class = 2,
