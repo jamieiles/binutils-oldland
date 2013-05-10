@@ -36,7 +36,6 @@ enum { OPCODE_BST = 9 };
 enum { OPCODE_BIC = 8 };
 enum { OPCODE_BKP = 0 };
 enum { OPCODE_STR16 = 1 };
-enum { OPCODE_ASL = 13 };
 enum { OPCODE_B = 4 };
 enum { OPCODE_LDR16 = 1 };
 enum { OPCODE_MOVHI = 11 };
@@ -46,7 +45,6 @@ enum { OPCODE_BEQ = 6 };
 enum { OPCODE_OR = 10 };
 enum { OPCODE_CMP = 12 };
 
-#define MAX_OP_TYPES 2
 
 struct oldland_operand {
 	const char			*name;
@@ -60,11 +58,13 @@ struct oldland_operand {
 			unsigned int	shift;
 		} def;
 		struct {
-			const struct oldland_operand *ops[MAX_OP_TYPES];
+			const struct oldland_operand **ops;
 			unsigned int	nr_ops;
 		} meta;
 	};
 };
+
+#define MAX_OP_TYPES 2
 
 struct oldland_instruction {
 	const char			*name;

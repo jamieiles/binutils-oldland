@@ -187,16 +187,6 @@ const struct oldland_instruction oldland_instructions_0[16] = {
                 .op3 = {&operands[OPERAND_IMM16], &operands[OPERAND_RB]},
                 .formatsel = 9,
         }, 
-        [OPCODE_ASL] = {
-                .name = "asl",
-                .class = 0,
-                .opcode = OPCODE_ASL,
-                .nr_operands = 2,
-                .op1 = {&operands[OPERAND_RA]},
-                .op2 = {&operands[OPERAND_IMM16], &operands[OPERAND_RB]},
-                .op3 = {},
-                .formatsel = 9,
-        }, 
         [OPCODE_MOVHI] = {
                 .name = "movhi",
                 .class = 0,
@@ -345,4 +335,17 @@ const struct oldland_instruction oldland_instructions_2[16] = {
         }, 
 };
 
-const struct oldland_instruction oldland_instructions_3[16] = {};
+const struct oldland_instruction oldland_instructions_3[16] = {
+        [OPCODE_BKP] = {
+                .name = "bkp",
+                .class = 3,
+                .opcode = OPCODE_BKP,
+                .nr_operands = 0,
+                .op1 = {},
+                .op2 = {},
+                .op3 = {},
+                .formatsel = -1,
+        }, 
+};
+
+
