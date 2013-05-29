@@ -344,7 +344,7 @@ void md_show_usage(FILE *stream ATTRIBUTE_UNUSED)
 
 long md_pcrel_from(fixS *fixP)
 {
-	return fixP->fx_where + fixP->fx_frag->fr_address;
+	return fixP->fx_where + fixP->fx_frag->fr_address + 4;
 }
 
 arelent *tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
@@ -354,11 +354,12 @@ arelent *tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 
 	switch (fixP->fx_r_type)
 	{
+	case BFD_RELOC_24_PCREL:
+	case BFD_RELOC_16_PCREL:
+		fixP->fx_offset -= 4;
 	case BFD_RELOC_NONE:
 	case BFD_RELOC_32:
 	case BFD_RELOC_16:
-	case BFD_RELOC_24_PCREL:
-	case BFD_RELOC_16_PCREL:
 	case BFD_RELOC_HI16:
 	case BFD_RELOC_LO16:
 		code = fixP->fx_r_type;

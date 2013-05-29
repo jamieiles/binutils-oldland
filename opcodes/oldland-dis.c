@@ -36,7 +36,7 @@ static void print_operand(const struct oldland_operand *op, bfd_vma addr,
 	case OPERAND_IMM24:
 		imm <<= 2;
 	case OPERAND_IMM16PC:
-		imm += addr;
+		imm += addr + 4;
 		info->print_address_func((bfd_vma)imm, info);
 		break;
 	case OPERAND_IMM16:
