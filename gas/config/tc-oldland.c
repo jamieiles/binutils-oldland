@@ -240,7 +240,8 @@ void md_assemble(char *str)
 
 	p = frag_more(4);
 
-	instr = (opcode->class << 30) | (opcode->opcode << 26);
+	instr = (opcode->class << 30) | (opcode->opcode << 26) |
+		opcode->constbits;
 	if (opcode->nr_operands >= 1) {
 		if (parse_operand(opcode->op1, p, &op_end, &instr, opcode))
 			return;
