@@ -60,7 +60,7 @@ static char *parse_exp_save_ilp(char *s, expressionS *op)
 }
 
 static const char *reg_names[8] = {
-	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$fp", "$sp"
+	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$lr", "$sp"
 };
 
 static int is_register_operand(char *ptr)

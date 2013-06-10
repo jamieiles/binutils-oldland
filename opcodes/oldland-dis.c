@@ -8,7 +8,7 @@
 #include "dis-asm.h"
 
 static const char *reg_names[8] = {
-	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$fp", "$sp"
+	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$lr", "$sp"
 };
 
 static inline unsigned int extract_field(unsigned int instr, unsigned int bitpos,
