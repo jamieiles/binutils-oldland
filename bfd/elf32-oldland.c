@@ -97,19 +97,47 @@ static reloc_howto_type oldland_elf_howto_table[] = {
 	      0x0,			/* src mask */
 	      0x3fffc00,		/* dst mask */
 	      FALSE),			/* pcrel_offset */
+	HOWTO(R_OLDLAND_PC13,		/* type */
+	      0,			/* rightshift */
+	      2,			/* size (0 = byte, 1 = short, 2 = long) */
+	      13,			/* bitsize */
+	      TRUE,			/* pc relative */
+	      13,			/* bitpos */
+	      complain_overflow_signed, /* complain_on_overflow */
+	      bfd_elf_generic_reloc,	/* special function */
+	      "R_OLDLAND_PC13",		/* name */
+	      FALSE,			/* partial inplace */
+	      0x0,			/* src mask */
+	      0x03ffe000,		/* dst mask */
+	      TRUE),			/* pcrel_offset */
+	HOWTO(R_OLDLAND_13,		/* type */
+	      0,			/* rightshift */
+	      1,			/* size (0 = byte, 1 = short, 2 = long) */
+	      13,			/* bitsize */
+	      FALSE,			/* pc relative */
+	      13,			/* bitpos */
+	      complain_overflow_dont,	/* complain_on_overflow */
+	      bfd_elf_generic_reloc,	/* special function */
+	      "R_OLDLAND_13",		/* name */
+	      FALSE,			/* partial inplace */
+	      0x0,			/* src mask */
+	      0x3ffe000,		/* dst mask */
+	      FALSE),			/* pcrel_offset */
 };
 
 static const struct reloc_map {
 	bfd_reloc_code_real_type bfd_reloc_val;
 	unsigned int oldland_reloc_val;
 } oldland_reloc_map[] = {
-	{ BFD_RELOC_NONE,	R_OLDLAND_NONE },
-	{ BFD_RELOC_32,		R_OLDLAND_32 },
-	{ BFD_RELOC_24_PCREL,	R_OLDLAND_PC24 },
-	{ BFD_RELOC_16_PCREL,	R_OLDLAND_PC16 },
-	{ BFD_RELOC_HI16,	R_OLDLAND_HI16 },
-	{ BFD_RELOC_LO16,	R_OLDLAND_LO16 },
-	{ BFD_RELOC_16,		R_OLDLAND_16 },
+	{ BFD_RELOC_NONE,		R_OLDLAND_NONE },
+	{ BFD_RELOC_32,			R_OLDLAND_32 },
+	{ BFD_RELOC_24_PCREL,		R_OLDLAND_PC24 },
+	{ BFD_RELOC_16_PCREL,		R_OLDLAND_PC16 },
+	{ BFD_RELOC_HI16,		R_OLDLAND_HI16 },
+	{ BFD_RELOC_LO16,		R_OLDLAND_LO16 },
+	{ BFD_RELOC_16,			R_OLDLAND_16 },
+	{ BFD_RELOC_OLDLAND_13, 	R_OLDLAND_13 },
+	{ BFD_RELOC_OLDLAND_PC13,	R_OLDLAND_PC13 },
 };
 
 static reloc_howto_type *

@@ -7,8 +7,9 @@
 #include "opcode/oldland.h"
 #include "dis-asm.h"
 
-static const char *reg_names[8] = {
-	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$lr", "$sp"
+static const char *reg_names[16] = {
+	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$r6", "$r7",
+	"$r8", "$r9", "$r10", "$r11", "$r12", "$fp", "$lr", "$sp",
 };
 
 static inline unsigned int extract_field(unsigned int instr, unsigned int bitpos,
@@ -35,10 +36,12 @@ static void print_operand(const struct oldland_operand *op, bfd_vma addr,
 	switch (op->type) {
 	case OPERAND_IMM24:
 		imm <<= 2;
+	case OPERAND_IMM13PC:
 	case OPERAND_IMM16PC:
 		imm += addr + 4;
 		info->print_address_func((bfd_vma)imm, info);
 		break;
+	case OPERAND_IMM13:
 	case OPERAND_IMM16:
 		fpr(stream, "0x%x", imm);
 		break;

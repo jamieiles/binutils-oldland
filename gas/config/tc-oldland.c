@@ -59,8 +59,9 @@ static char *parse_exp_save_ilp(char *s, expressionS *op)
 	return s;
 }
 
-static const char *reg_names[8] = {
-	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$lr", "$sp"
+static const char *reg_names[16] = {
+	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$r6", "$r7",
+	"$r8", "$r9", "$r10", "$r11", "$r12", "$fp", "$lr", "$sp",
 };
 
 static int is_register_operand(char *ptr)
@@ -152,6 +153,8 @@ static int parse_operand(const struct oldland_operand * const op[MAX_OP_TYPES],
 		case OPERAND_IMM16PC:
 		case OPERAND_IMM16:
 		case OPERAND_IMM24:
+		case OPERAND_IMM13PC:
+		case OPERAND_IMM13:
 			if (op_class == OP_CLASS_IMMEDIATE) {
 				if (!strncmp(*op_end, "%hi(", 4)) {
 					*op_end += 4;
@@ -164,9 +167,13 @@ static int parse_operand(const struct oldland_operand * const op[MAX_OP_TYPES],
 				} else if (opdef->type == OPERAND_IMM24) {
 					reloc_type = BFD_RELOC_24_PCREL;
 					pcrel = 1;
-				} else {
+				} else if (opdef->type == OPERAND_IMM16PC ||
+					   opdef->type == OPERAND_IMM16) {
 					reloc_type = BFD_RELOC_16;
 					pcrel = opdef->type == OPERAND_IMM16PC;
+				} else {
+					reloc_type = BFD_RELOC_OLDLAND_13;
+					pcrel = opdef->type == OPERAND_IMM13PC;
 				}
 				*op_end = parse_exp_save_ilp(*op_end, &arg);
 				fix_new_exp(frag_now,
@@ -419,6 +426,12 @@ void md_apply_fix(fixS *fixP ATTRIBUTE_UNUSED, valueT * valP ATTRIBUTE_UNUSED,
 	case BFD_RELOC_16_PCREL:
 		instr = read_instruction(buf);
 		instr |= (val & 0xffff) << 10;
+		md_number_to_chars(buf, instr, 4);
+		break;
+	case BFD_RELOC_OLDLAND_13:
+	case BFD_RELOC_OLDLAND_PC13:
+		instr = read_instruction(buf);
+		instr |= (val & 0x1fff) << 13;
 		md_number_to_chars(buf, instr, 4);
 		break;
 	default:

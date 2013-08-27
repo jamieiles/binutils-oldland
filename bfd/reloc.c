@@ -6535,6 +6535,14 @@ ENUM
   BFD_RELOC_EPIPHANY_IMM8
 ENUMDOC
   Adapteva EPIPHANY - 8 bit immediate for 16 bit mov instruction.
+ENUM
+  BFD_RELOC_OLDLAND_13 
+ENUMDOC
+  Oldland - 13 bit PC-relative for arithmetic operations
+ENUM
+  BFD_RELOC_OLDLAND_PC13 
+ENUMDOC
+  Oldland - 13 bit for arithmetic operations
 
 
 ENDSENUM
