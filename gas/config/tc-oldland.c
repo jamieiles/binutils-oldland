@@ -364,12 +364,14 @@ arelent *tc_gen_reloc(asection *section ATTRIBUTE_UNUSED, fixS *fixP)
 	{
 	case BFD_RELOC_24_PCREL:
 	case BFD_RELOC_16_PCREL:
+	case BFD_RELOC_OLDLAND_PC13:
 		fixP->fx_offset -= 4;
 	case BFD_RELOC_NONE:
 	case BFD_RELOC_32:
 	case BFD_RELOC_16:
 	case BFD_RELOC_HI16:
 	case BFD_RELOC_LO16:
+	case BFD_RELOC_OLDLAND_13:
 		code = fixP->fx_r_type;
 		break;
 	default:
@@ -431,7 +433,7 @@ void md_apply_fix(fixS *fixP ATTRIBUTE_UNUSED, valueT * valP ATTRIBUTE_UNUSED,
 	case BFD_RELOC_OLDLAND_13:
 	case BFD_RELOC_OLDLAND_PC13:
 		instr = read_instruction(buf);
-		instr |= (val & 0x1fff) << 13;
+		instr |= (val & 0x1fff) << 12;
 		md_number_to_chars(buf, instr, 4);
 		break;
 	default:

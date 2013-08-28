@@ -102,7 +102,7 @@ static reloc_howto_type oldland_elf_howto_table[] = {
 	      2,			/* size (0 = byte, 1 = short, 2 = long) */
 	      13,			/* bitsize */
 	      TRUE,			/* pc relative */
-	      13,			/* bitpos */
+	      12,			/* bitpos */
 	      complain_overflow_signed, /* complain_on_overflow */
 	      bfd_elf_generic_reloc,	/* special function */
 	      "R_OLDLAND_PC13",		/* name */
@@ -115,7 +115,7 @@ static reloc_howto_type oldland_elf_howto_table[] = {
 	      1,			/* size (0 = byte, 1 = short, 2 = long) */
 	      13,			/* bitsize */
 	      FALSE,			/* pc relative */
-	      13,			/* bitpos */
+	      12,			/* bitpos */
 	      complain_overflow_dont,	/* complain_on_overflow */
 	      bfd_elf_generic_reloc,	/* special function */
 	      "R_OLDLAND_13",		/* name */
