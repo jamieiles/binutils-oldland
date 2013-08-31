@@ -69,7 +69,7 @@ static int is_register_operand(char *ptr)
 	unsigned int m;
 
 	for (m = 0; m < ARRAY_SIZE(reg_names); ++m)
-		if (!strncmp(ptr, reg_names[m], 3))
+		if (!strncmp(ptr, reg_names[m], strlen(reg_names[m])))
 			return TRUE;
 
 	return FALSE;
