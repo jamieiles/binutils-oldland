@@ -169,10 +169,13 @@ static int parse_operand(const struct oldland_operand * const op[MAX_OP_TYPES],
 					pcrel = 1;
 				} else if (opdef->type == OPERAND_IMM16PC ||
 					   opdef->type == OPERAND_IMM16) {
-					reloc_type = BFD_RELOC_16;
+					reloc_type = opdef->type == OPERAND_IMM16PC ?
+						BFD_RELOC_16_PCREL : BFD_RELOC_16;
 					pcrel = opdef->type == OPERAND_IMM16PC;
 				} else {
-					reloc_type = BFD_RELOC_OLDLAND_13;
+					reloc_type = opdef->type == OPERAND_IMM13PC ?
+						BFD_RELOC_OLDLAND_PC13 :
+						BFD_RELOC_OLDLAND_13;
 					pcrel = opdef->type == OPERAND_IMM13PC;
 				}
 				*op_end = parse_exp_save_ilp(*op_end, &arg);
