@@ -108,7 +108,7 @@ static reloc_howto_type oldland_elf_howto_table[] = {
 	      "R_OLDLAND_PC13",		/* name */
 	      FALSE,			/* partial inplace */
 	      0x0,			/* src mask */
-	      0x03ffe000,		/* dst mask */
+	      0x01fff000,		/* dst mask */
 	      TRUE),			/* pcrel_offset */
 	HOWTO(R_OLDLAND_13,		/* type */
 	      0,			/* rightshift */
@@ -121,7 +121,7 @@ static reloc_howto_type oldland_elf_howto_table[] = {
 	      "R_OLDLAND_13",		/* name */
 	      FALSE,			/* partial inplace */
 	      0x0,			/* src mask */
-	      0x3ffe000,		/* dst mask */
+	      0x01fff000,		/* dst mask */
 	      FALSE),			/* pcrel_offset */
 };
 
