@@ -9,7 +9,7 @@
 
 static const char *reg_names[16] = {
 	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$r6", "$r7",
-	"$r8", "$r9", "$r10", "$r11", "$r12", "$fp", "$lr", "$sp",
+	"$r8", "$r9", "$r10", "$r11", "$r12", "$fp", "$sp", "$lr",
 };
 
 static inline unsigned int extract_field(unsigned int instr, unsigned int bitpos,
