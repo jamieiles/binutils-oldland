@@ -8,26 +8,27 @@
 #include <stdbool.h>
 
 enum alu_opcode {
-	ALU_OPCODE_AND = 0x06,
-	ALU_OPCODE_ASR = 0x0e,
-	ALU_OPCODE_XOR = 0x07,
-	ALU_OPCODE_SUB = 0x02,
-	ALU_OPCODE_BST = 0x09,
-	ALU_OPCODE_MOVHI = 0x0d,
-	ALU_OPCODE_LSL = 0x04,
-	ALU_OPCODE_BIC = 0x08,
-	ALU_OPCODE_SWI = 0x11,
-	ALU_OPCODE_ADD = 0x00,
-	ALU_OPCODE_GCR = 0x10,
-	ALU_OPCODE_LSR = 0x05,
-	ALU_OPCODE_SUBC = 0x03,
-	ALU_OPCODE_RFE = 0x12,
-	ALU_OPCODE_COPYA = 0x0f,
-	ALU_OPCODE_CPUID = 0x13,
-	ALU_OPCODE_ADDC = 0x01,
-	ALU_OPCODE_COPYB = 0x0b,
-	ALU_OPCODE_OR = 0x0a,
-	ALU_OPCODE_CMP = 0x0c,
+	ALU_OPCODE_AND = 6,
+	ALU_OPCODE_ASR = 14,
+	ALU_OPCODE_BST = 9,
+	ALU_OPCODE_LSL = 4,
+	ALU_OPCODE_BIC = 8,
+	ALU_OPCODE_LSR = 5,
+	ALU_OPCODE_SUBC = 3,
+	ALU_OPCODE_COPYA = 15,
+	ALU_OPCODE_CPUID = 19,
+	ALU_OPCODE_SWI = 17,
+	ALU_OPCODE_XOR = 7,
+	ALU_OPCODE_SUB = 2,
+	ALU_OPCODE_MOVHI = 13,
+	ALU_OPCODE_ADD = 0,
+	ALU_OPCODE_GCR = 16,
+	ALU_OPCODE_ADDC = 1,
+	ALU_OPCODE_RFE = 18,
+	ALU_OPCODE_MUL = 20,
+	ALU_OPCODE_COPYB = 11,
+	ALU_OPCODE_OR = 10,
+	ALU_OPCODE_CMP = 12,
 };
 
 enum operand_type {
@@ -43,6 +44,7 @@ enum operand_type {
 };
 
 enum { OPCODE_AND = 6 };
+enum { OPCODE_ASR = 14 };
 enum { OPCODE_BLTS = 10 };
 enum { OPCODE_LSL = 4 };
 enum { OPCODE_LSR = 5 };
@@ -55,22 +57,22 @@ enum { OPCODE_XOR = 7 };
 enum { OPCODE_SUB = 2 };
 enum { OPCODE_BLT = 8 };
 enum { OPCODE_RET = 1 };
-enum { OPCODE_GCR = 1 };
 enum { OPCODE_ADD = 0 };
-enum { OPCODE_STR32 = 4 };
+enum { OPCODE_GCR = 1 };
 enum { OPCODE_CALL = 0 };
-enum { OPCODE_ADDC = 1 };
+enum { OPCODE_MUL = 11 };
 enum { OPCODE_LDR8 = 2 };
 enum { OPCODE_BNE = 5 };
-enum { OPCODE_ASR = 14 };
+enum { OPCODE_STR32 = 4 };
 enum { OPCODE_BST = 9 };
 enum { OPCODE_BIC = 8 };
 enum { OPCODE_BGTS = 9 };
+enum { OPCODE_B = 4 };
 enum { OPCODE_BKP = 0 };
 enum { OPCODE_STR16 = 5 };
 enum { OPCODE_ORLO = 13 };
 enum { OPCODE_NOP = 15 };
-enum { OPCODE_B = 4 };
+enum { OPCODE_ADDC = 1 };
 enum { OPCODE_LDR16 = 1 };
 enum { OPCODE_MOVHI = 11 };
 enum { OPCODE_BGT = 7 };
