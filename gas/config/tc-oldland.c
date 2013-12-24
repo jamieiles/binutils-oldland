@@ -60,8 +60,22 @@ static char *parse_exp_save_ilp(char *s, expressionS *op)
 }
 
 static const char *reg_names[16] = {
-	"$r0", "$r1", "$r2", "$r3", "$r4", "$r5", "$r6", "$r7",
-	"$r8", "$r9", "$r10", "$r11", "$r12", "$fp", "$sp", "$lr",
+	"$lr",
+	"$sp",
+	"$fp",
+	"$r12",
+	"$r11",
+	"$r10",
+	"$r9",
+	"$r8",
+	"$r7",
+	"$r6",
+	"$r5",
+	"$r4",
+	"$r3",
+	"$r2",
+	"$r1",
+	"$r0",
 };
 
 static int is_register_operand(char *ptr)
@@ -86,9 +100,9 @@ static int parse_register_operand(char **ptr)
 	unsigned int m;
 
 	for (m = 0; m < ARRAY_SIZE(reg_names); ++m)
-		if (!strncmp(s, reg_names[m], 3)) {
-			*ptr += 3;
-			return (int)m;
+		if (!strncmp(s, reg_names[m], strlen(reg_names[m]))) {
+			*ptr += strlen(reg_names[m]);
+			return 15 - (int)m;
 		}
 
 	as_bad(_("illegal register number"));
