@@ -56,6 +56,7 @@ enum { OPCODE_STR8 = 6 };
 enum { OPCODE_XOR = 7 };
 enum { OPCODE_SUB = 2 };
 enum { OPCODE_BLT = 8 };
+enum { OPCODE_CACHE = 15 };
 enum { OPCODE_RET = 1 };
 enum { OPCODE_ADD = 0 };
 enum { OPCODE_GCR = 1 };

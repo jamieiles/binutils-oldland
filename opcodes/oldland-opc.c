@@ -387,6 +387,17 @@ const struct oldland_instruction oldland_instructions_2[16] = {
                 .op3 = {},
                 .formatsel = 25,
         }, 
+        [OPCODE_CACHE] = {
+                .name = "cache",
+                .class = 2,
+                .opcode = OPCODE_CACHE,
+                .constbits = 0x00000000,
+                .nr_operands = 2,
+                .op1 = {&operands[OPERAND_RA]},
+                .op2 = {&operands[OPERAND_IMM13]},
+                .op3 = {},
+                .formatsel = -1,
+        }, 
         [OPCODE_LDR8] = {
                 .name = "ldr8",
                 .class = 2,
