@@ -216,6 +216,17 @@ const struct oldland_instruction oldland_instructions_0[16] = {
                 .op3 = {&operands[OPERAND_IMM13], &operands[OPERAND_RB]},
                 .formatsel = 25,
         }, 
+        [OPCODE_MOV] = {
+                .name = "mov",
+                .class = 0,
+                .opcode = OPCODE_MOV,
+                .constbits = 0x00000000,
+                .nr_operands = 2,
+                .op1 = {&operands[OPERAND_RD]},
+                .op2 = {&operands[OPERAND_IMM13], &operands[OPERAND_RB]},
+                .op3 = {},
+                .formatsel = 25,
+        }, 
         [OPCODE_ADDC] = {
                 .name = "addc",
                 .class = 0,

@@ -67,6 +67,7 @@ enum { OPCODE_BNE = 5 };
 enum { OPCODE_STR32 = 4 };
 enum { OPCODE_BST = 9 };
 enum { OPCODE_BIC = 8 };
+enum { OPCODE_MOV = 15 };
 enum { OPCODE_BGTS = 9 };
 enum { OPCODE_B = 4 };
 enum { OPCODE_BKP = 0 };
