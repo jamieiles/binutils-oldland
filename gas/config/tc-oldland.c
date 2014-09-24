@@ -195,7 +195,7 @@ static int parse_operand(const struct oldland_operand * const op[MAX_OP_TYPES],
 				*op_end = parse_exp_save_ilp(*op_end, &arg);
 				fix_new_exp(frag_now,
 					    (p - frag_now->fr_literal),
-					    2, &arg, pcrel, reloc_type);
+					    4, &arg, pcrel, reloc_type);
 
 				if ((reloc_type == BFD_RELOC_LO16 ||
 				     reloc_type == BFD_RELOC_HI16) &&
